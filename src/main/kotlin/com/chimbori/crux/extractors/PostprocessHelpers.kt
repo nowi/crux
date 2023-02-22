@@ -56,8 +56,10 @@ internal class PostprocessHelpers private constructor(private val keepers: Set<N
     element.children().forEach { childElement ->
       removeTagsButRetainContent(childElement)
       if (REMOVE_TAGS_BUT_RETAIN_CONTENT.contains(childElement.tagName())) {
-        Log.i("removeTagsButRetainContent: [%s] %s", childElement.tagName(), childElement.outerHtml())
-        childElement.tagName("p") // Set the wrapper tag to <p> instead of unwrapping them.
+        if (!shouldKeep(childElement)) {
+          Log.i("removeTagsButRetainContent: [%s] %s", childElement.tagName(), childElement.outerHtml())
+          childElement.tagName("p") // Set the wrapper tag to <p> instead of unwrapping them.
+        }
       }
     }
   }
