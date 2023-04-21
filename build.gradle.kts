@@ -31,9 +31,9 @@ repositories {
 }
 
 buildscript {
-  repositories {
-    mavenCentral()
-  }
+//  repositories {
+//    mavenCentral()
+//  }
   dependencies {
     classpath(kotlin("gradle-plugin", version = "1.8.10"))
     classpath("com.github.ben-manes:gradle-versions-plugin:0.45.0")
