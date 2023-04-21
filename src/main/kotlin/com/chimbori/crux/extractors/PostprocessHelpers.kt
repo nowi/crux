@@ -162,7 +162,7 @@ internal class PostprocessHelpers private constructor(private val keepers: Set<N
       setOf("b", "i", "u", "strong", "em", "a", "pre", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote")
 
     /** The whitelist of attributes that should be retained in the output. No other attributes will be retained. */
-    private val ATTRIBUTES_TO_RETAIN_IN_HTML = setOf("href")
+    private val ATTRIBUTES_TO_RETAIN_IN_HTML = setOf("href","src","data-src","width","height","alt")
 
     /**
      * After a final set of top-level nodes has been extracted, all tags except these are removed.
@@ -181,6 +181,7 @@ internal class PostprocessHelpers private constructor(private val keepers: Set<N
       val keepers = Collections.newSetFromMap(IdentityHashMap<Node, Boolean>())
       for (element in topNode.select("[crux-keep]")) {
         keepers.addAll(getAncestorsSelfAndDescendants(topNode, element))
+//        keepers.addAll(getSelfAndDescendants(topNode, element))
       }
       val helper = PostprocessHelpers(keepers)
       helper.removeNodesWithNegativeScores(topNode)
@@ -196,6 +197,21 @@ internal class PostprocessHelpers private constructor(private val keepers: Set<N
       }
       return doc
     }
+    private fun getSelfAndDescendants(root: Element, e: Element): Collection<Node> {
+      val result: MutableList<Node> = ArrayList()
+
+      // Add all descendants
+      val nodes: Queue<Node> = ArrayDeque(e.childNodes())
+      while (!nodes.isEmpty()) {
+        val node = nodes.poll()
+        result.add(node)
+        for (childNode in node.childNodes()) {
+          nodes.offer(childNode)
+        }
+      }
+      return result
+    }
+
 
     private fun getAncestorsSelfAndDescendants(root: Element, e: Element): Collection<Node> {
       val result: MutableList<Node> = ArrayList()

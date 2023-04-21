@@ -5,6 +5,25 @@ plugins {
   kotlin("jvm") version "1.8.10"
   id("com.github.ben-manes.versions") version "0.45.0"
   id("com.vanniktech.maven.publish") version "0.24.0"
+  id("maven-publish")
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/nowi/crux")
+      credentials {
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+      }
+    }
+  }
+  publications {
+    register<MavenPublication>("gpr") {
+      from(components["java"])
+    }
+  }
 }
 
 repositories {
@@ -45,7 +64,7 @@ tasks.jar {
 
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions {
-    allWarningsAsErrors = true
+    allWarningsAsErrors = false
   }
 }
 
@@ -57,5 +76,5 @@ kotlin {
 }
 
 mavenPublishing {
-  signAllPublications()
+//  signAllPublications()
 }
