@@ -1,56 +1,24 @@
-name: Release JAR
+name: Publish to Gradle Registry
 
 on:
   push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"  # Matches "v1.2.3" but not "v1.2.3.4"
-      # The JAR filename cannot be changed from "crux-1.2.3.jar" because it’s
-      # also published to Maven, so use the tag name to derive the JAR filename.
-      # WARNING: This only works if the tag name format is "v1.2.3".
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    # ---- Create a release first, even if build fails -------------------------
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
+      - name: Checkout Source
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
 
-    # ---- Set up environment --------------------------------------------------
-    - name: Checkout Source
-      uses: actions/checkout@v2
-    - name: Validate Gradle Wrapper
-      uses: gradle/wrapper-validation-action@v1
-    - name: Set up JDK 11
-      uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'adopt'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
-    # ---- Build the JAR -------------------------------------------------------
-    - name: Build the JAR
-      run: ./gradlew jar
-
-    # ---- Compute the JAR filename --------------------------------------------
-    - name: Compute the JAR filename
-      # Remove the "v" prefix from the tag. ("v1.2.3" --> "crux-1.2.3.jar")
-      run: |
-        JAR_FILENAME=crux-$(echo "${{ github.ref }}" | sed -e 's|^refs/tags/v||').jar
-        echo "JAR_FILENAME=$JAR_FILENAME" >> $GITHUB_ENV
-
-    # ---- Upload JAR to GitHub Release ----------------------------------------
-    - name: Upload JAR to GitHub Release
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/libs/crux.jar
-        asset_name: ${{ env.JAR_FILENAME }}
-        asset_content_type: application/java-archive
+      - name: Execute Gradle build
+        run: ./gradlew clean publish
