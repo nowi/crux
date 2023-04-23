@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Strict
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.monastery.mycrux"
+group = "com.monastery.crux"
 version = "3.12.8"
 
 plugins {
