@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode.Strict
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "com.monastery"
-version = "3.12.8"
+version = "3.12.9"
 
 plugins {
   kotlin("jvm") version "1.8.10"
@@ -48,10 +48,13 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
   implementation("com.beust:klaxon:5.6")
+  implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
+  implementation("ch.qos.logback:logback-classic:1.4.6")
 
   testImplementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
   testImplementation("com.squareup.okhttp3:mockwebserver:4.10.0")
   testImplementation("junit:junit:4.13.2")
+  implementation(kotlin("stdlib-jdk8"))
 }
 
 configurations.all {
@@ -74,4 +77,12 @@ kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of("11"))
   }
+}
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.kotlinOptions {
+  jvmTarget = "1.8"
+}
+val compileTestKotlin: KotlinCompile by tasks
+compileTestKotlin.kotlinOptions {
+  jvmTarget = "1.8"
 }

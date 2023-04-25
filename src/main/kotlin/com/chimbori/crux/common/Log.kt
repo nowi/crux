@@ -1,15 +1,17 @@
 package com.chimbori.crux.common
 
+import mu.KotlinLogging
 import org.jsoup.nodes.Node
 
 internal object Log {
   private const val DEBUG = false
 
   private const val TRUNCATE = true
+  private val logger = KotlinLogging.logger {}
 
   fun i(message: String, vararg args: Any?) {
     if (DEBUG) {
-      System.err.println(String.format(message, *args))
+      logger.info(String.format(message, *args))
     }
   }
 
